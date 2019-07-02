@@ -1,0 +1,8 @@
+#!/usr/bin/python
+from funcload import load
+
+def hey(arg):
+    print('IT WORKED', arg)
+    print('ok')
+
+load('hey','arg')
