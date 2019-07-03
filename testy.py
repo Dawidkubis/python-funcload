@@ -1,5 +1,4 @@
-#!/usr/bin/python
-from funcload import load
+from fcld import load
 
 def hey(arg):
     a = 2
@@ -7,3 +6,4 @@ def hey(arg):
     print('ok')
 
 load('hey','arg')
+

@@ -1,31 +1,38 @@
 #!/usr/bin/python
 
-def get_intend(string):
+import sys
 
-    intend = ''
-    for i in string:
-        if i not in (' ', '\t'):
-            break
-        intend += i
-    return intend
-
-def load(name, args=None):
-
-    import re
+def load(name, args=None, SCRIPT = sys.argv[0]):
+    '''
+    Loads all variables from a function to current session
+    name - name of function
+    args - arguments of function as tuple, None by default
+    SCRIPT - file name of current session, sys.argv[0] by default
+    '''
 
     def get_lines(file):
 
         with open(file, 'r') as file:
             return file.readlines()
 
-    def set_lines(file):
+    def set_lines(file, lines):
+        
+        with open(file, 'w') as file:
+            file.writelines(lines)
 
-        import random
+    def get_random_file_name():
+        pass
 
+    def get_intend(string):
 
-    # get name of file
+        intend = ''
+        for i in string:
+            if i not in (' ', '\t'):
+                break
+            intend += i
+        return intend
 
-    SCRIPT = sys.argv[0]
+    import re
 
     # open file and read lines
 
@@ -61,9 +68,4 @@ def load(name, args=None):
             lines = lines[:index + 1]
             break
 
-    #print(lines)
-
-    # 
-    
-if __name__ == '__main__':
-    pass
+assert __name__ != '__main__', 'This module is meant to be imported!'
