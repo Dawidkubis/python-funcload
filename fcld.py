@@ -77,6 +77,19 @@ def load(name, args=(), script=sys.argv[0]):
             i = 0
             while i < len(line):
 				
+                if line[i] == "'":
+                    status = None if status == "'" else "'"
+                elif line[i] == '"':
+                    status = None if status == '"' else '"'
+
+                if status == None:
+
+                    for x in [i[0] in zip_args]:
+
+                        if x[0] == line[i] and len(line) < i + len(x):
+                            if i == 0 or line[i-1] in ' ', '\t':
+                                pass
+
 
                 i += 1
 
