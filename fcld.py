@@ -42,7 +42,7 @@ def load(name, args=(), script=sys.argv[0]):
         while True:
             x = roll_name()
             if x not in os.listdir():
-                return x
+                return x+'.py'
 
     def get_intend(string):
 
@@ -66,32 +66,20 @@ def load(name, args=(), script=sys.argv[0]):
 
         return func_head
 
-    def subs_args(lines, zip_args):
+    def add_values(lines, zip_args):
 
         from copy import deepcopy
+
         lines = deepcopy(lines)
+        values = []
 
-        for line in lines:
-		
-            status = None
-            i = 0
-            while i < len(line):
-				
-                if line[i] == "'":
-                    status = None if status == "'" else "'"
-                elif line[i] == '"':
-                    status = None if status == '"' else '"'
+        for i in zip_args:
+            if isinstance(zip_args[i], str):
+                values.append(f"{i} = '{zip_args[i]}'")
+            else:
+                values.append(f'{i} = {zip_args[i]}')
 
-                if status == None:
-
-                    for x in [i[0] in zip_args]:
-
-                        if x[0] == line[i] and len(line) < i + len(x):
-                            if i == 0 or line[i-1] in ' ', '\t':
-                                pass
-
-
-                i += 1
+        return values + lines
 
     ## open file and read lines
 
@@ -109,7 +97,7 @@ def load(name, args=(), script=sys.argv[0]):
     ## check if func_head is not None, therefore function exists in script
     ## return None if function not found
 
-    assert func_head != None, 'function not found'
+    assert func_head is not None, 'function not found'
 
     ## save intendation on func_head
 
@@ -135,12 +123,38 @@ def load(name, args=(), script=sys.argv[0]):
 
     assert len(func_args) == len(args), 'invalid number of function arguments'
 
-    ## make a zip from function arguments and args variable
+    ## make a dict from zip from function arguments and args variable
 
-    args = list(zip(func_args, args))
+    args = dict(zip(func_args, args))
     #print(args)
-    print(lines)
+    #print(args)
 
-    ## replace arg names with values
+    ## add variable values
+
+    lines = add_values(lines, args)
+    #print(lines)
+
+    ## strip lines and add \n
+
+    lines = [i.strip()+'\n' for i in lines]
+    #print(lines)
+
+    ## write lines to random file
+
+    name = get_random_file_name()
+    set_lines(name, lines)
+
+    ## import file
+
+    from importlib import import_module
+    cache = import_module(name[:-3])
+
+    ## delete file
+
+    os.remove(name)
+
+    ## return import
+
+    return cache
 
 assert __name__ != '__main__', 'This module is meant to be imported!'
