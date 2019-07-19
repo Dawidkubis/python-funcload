@@ -44,14 +44,14 @@ def load(name, args=(), script=sys.argv[0]):
             if x not in os.listdir():
                 return x+'.py'
 
-    def get_intend(string):
+    def get_indent(string):
 
-        intend = ''
+        indent = ''
         for i in string:
             if i not in (' ', '\t'):
                 break
-            intend += i
-        return intend
+            indent += i
+        return indent
 
     def parse_args(func_head):
 
@@ -75,11 +75,15 @@ def load(name, args=(), script=sys.argv[0]):
 
         for i in zip_args:
             if isinstance(zip_args[i], str):
-                values.append(f"{i} = '{zip_args[i]}'")
+                values.append(f"{i} = '{zip_args[i]}'\n")
             else:
-                values.append(f'{i} = {zip_args[i]}')
+                values.append(f'{i} = {zip_args[i]}\n')
 
         return values + lines
+
+    def untab(lines, indent):
+
+        return [i.replace(indent, '', 1) for i in lines]
 
     ## open file and read lines
 
@@ -92,28 +96,25 @@ def load(name, args=(), script=sys.argv[0]):
         if func_head:
             lines = lines[index:]
             break
-    #print(lines)
 
     ## check if func_head is not None, therefore function exists in script
     ## return None if function not found
 
     assert func_head is not None, 'function not found'
 
-    ## save intendation on func_head
+    ## save indentation on func_head and first line of code
 
     func_head = lines[0]
     lines = lines[1:]
-    intend = get_intend(func_head)
-    #print(intend + func_head)
+    indent = get_indent(func_head)
+    indent_code = get_indent(lines[0])
 
     ## find end line of function
 
     for index, value in enumerate(lines):
-        if get_intend(value) == intend:
+        if get_indent(value) == indent:
             lines = lines[:index + 1]
             break
-    #print(lines)
-    #print(get_random_file_name())
 
     ## get function arguments
 
@@ -126,18 +127,14 @@ def load(name, args=(), script=sys.argv[0]):
     ## make a dict from zip from function arguments and args variable
 
     args = dict(zip(func_args, args))
-    #print(args)
-    #print(args)
+
+    ## untab lines
+
+    lines = untab(lines, indent_code)
 
     ## add variable values
 
     lines = add_values(lines, args)
-    #print(lines)
-
-    ## strip lines and add \n
-
-    lines = [i.strip()+'\n' for i in lines]
-    #print(lines)
 
     ## write lines to random file
 
@@ -153,7 +150,7 @@ def load(name, args=(), script=sys.argv[0]):
 
     os.remove(name)
 
-    ## return import
+    ## return cache
 
     return cache
 
