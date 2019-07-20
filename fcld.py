@@ -2,7 +2,6 @@
 '''
 function loading to current session
 '''
-
 import sys
 
 def load(name, args=(), script=sys.argv[0]):
@@ -17,7 +16,7 @@ def load(name, args=(), script=sys.argv[0]):
 
     ## basic asserts
 
-    assert isinstance(args, tuple), 'args is meant to be tuple'
+    assert type(args) in (dict, tuple), 'args is meant to be tuple'
     assert os.path.exists(script), 'invalid path'
 
     def get_lines(file):
@@ -123,10 +122,12 @@ def load(name, args=(), script=sys.argv[0]):
     ## check if len of func_args matcher len of args
 
     assert len(func_args) == len(args), 'invalid number of function arguments'
+    if isinstance(args, dict):
+        for i in args:
+            assert i in func_args, f'invalid argument name: {i}, arguments are {func_args}'
+    ## make a dict from zip from function arguments and args variable if not dict
 
-    ## make a dict from zip from function arguments and args variable
-
-    args = dict(zip(func_args, args))
+    args = dict(zip(func_args, args)) if isinstance(args, tuple) else args
 
     ## untab lines
 
@@ -144,7 +145,9 @@ def load(name, args=(), script=sys.argv[0]):
     ## import file
 
     from importlib import import_module
+    print('-'*10, 'loading module')
     cache = import_module(name[:-3])
+    print('-'*10)
 
     ## delete file
 
