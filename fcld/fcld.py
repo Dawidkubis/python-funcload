@@ -145,9 +145,7 @@ def load(name, args=(), script=sys.argv[0]):
     ## import file
 
     from importlib import import_module
-    print('-'*10, 'loading module')
     cache = import_module(name[:-3])
-    print('-'*10)
 
     ## delete file
 
