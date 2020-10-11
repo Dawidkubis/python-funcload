@@ -1,6 +1,6 @@
 # python-funcload
 Load function variables directly into python interactive mode
-(still work in progress)
+(not very useful)
 ## Usage
 ```python
 def test(a, b)
